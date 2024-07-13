@@ -66,20 +66,27 @@ Tabla 1. Popularidad de los motores de plantillas expresada en términos de desc
 ### Estructura de carpetas:
 
 - Los archivos y carpetas del proyecto Frontend se ubican en la dirección:
-  .public
-  /css
-  /html
-  /js
-
+```javascript
+/*  ./public
+  	/css
+  	/html
+  	/js
+*/
 - Los archivos relacionados con la configuración del servidor se ubican en la dirección:
-  ./src
-  app.js
-  /routes
-  homepage.routes.js (rutas a distintas vistas de la app)
+  ``` javascript
+/*
+	./src
+  		app.js
+  	/routes
+  		homepage.routes.js (rutas a distintas vistas de la app)
+*/
 - Los archivos relacionados a las vistas creadas con el motor de plantillas se ubican en:
-  ./view
-  /partials
-  /components
+```javascript
+*/
+	./view
+  		/partials
+  	/components
+```
 
 ## Configurando el servidor
 
