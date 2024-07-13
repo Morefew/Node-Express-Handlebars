@@ -334,6 +334,7 @@ Llamamos el Partial `header.hbs` dentro de la plantilla `index.hbs`
 Salida
 ![Mostrando la salida del partial](partialIndex.png "salida del partial")
 
+
 Hasta ahora nuestra app es sencilla, pero pudiera crecer a muchas rutas más haciendo el archivo `apps.js` difícil de manejar. En ese caso podemos modularizar la aplicación creando una carpeta `/src/routes/` donde almacenar las rutas de los módulos.
 
     ./src
@@ -341,11 +342,113 @@ Hasta ahora nuestra app es sencilla, pero pudiera crecer a muchas rutas más hac
     	/routes
     		homepage.routes.js (rutas a distintas paginas de la app)
 
+### Separando por contexto cada grupo de rutas
 
-## Prox tema
+Definamos a "homepage.routes.js" importando primero a Express.
+``` javascript
+ const express = require('express')
+```
+
+ Al configurar el servidor en el archivo "app.js" asignamos Express a la variable `app`, sin embargo al modularizar las rutas usaremos necesitamos usar el router que Express [13](http://expressjs.com/en/5x/api.html#router) nos provee por lo que adaptaremos cada ruta creada para usar este route.
+
+``` javascript
+const router = new express.Router()
+
+router.get("/", (req, res) => {
+	res.render('index', {
+	titulo: 'HBS
+	mensaje: 'Home Page'
+	});
+})
+
+router.get("/help", (req, res) => {
+	res.render('help', {
+	titulo: 'HBS-Help
+	mensaje: 'Help page'
+	});
+})
+
+router.get("/about", (req, res) => {
+	res.render('about', {
+	titulo: 'HBS-About
+	mensaje: 'HBS About us'
+	});
+})
+
+module.exports = router
+```
+
+Luego de definir este módulo debemos cargarlo en el archivo `app.js`  agregando las siguientes líneas:
+```javascript
+// asignamos el router del modulo a una variable
+const homepageRouter = require('./routes/homepage.routes')
+
+// montamos en express el módulo
+app.use(homepageRouter)
+```
+
+Aprovechando el cambio hacia la modularización de la aplicación, podemos separar un poco más el diseño de nuestra aplicación siguiendo las actividades que realizan las distintas partes del código que tenemos hasta ahora.
+
+### Creando la capa Controlador
+Hasta este momento este código combina cierta lógica de negocio con cuestiones de presentación. Sin embargo, no es un caso grave de mezcla y este patrón es bastante común en las aplicaciones Express.js, especialmente para rutas más simples.
+
+Si bien este enfoque es funcional, es posible mejorar la separación de intereses. Moviendo la lógica de manejo de rutas a funciones de controlador separadas, se logra desacoplar la configuración de enrutamiento de la lógica de manejo de solicitudes.
+
+Iniciamos creando la carpeta para nuestros controladores y en ella el archivo de nuestro controlador:
+    ./src
+    	app.js
+	    /controllers
+		    homepage.controller.js
+    	/routes
+    		homepage.routes.js (rutas a distintas paginas de la app)
+
+Luego definimos el controlador `homepage.controller.js` cortando y pegando la configuración de las rutas definidas en `homepage.routes.js`.
+``` javascript
+const controller = {};
+
+controller.index = (req, res) => {
+	res.render('index', {
+	titulo: 'HBS
+	mensaje: 'Home Page'
+	});
+};
+
+controller.help = (req, res) => {
+	res.render('help', {
+	titulo: 'HBS-Help
+	mensaje: 'Help page'
+	});
+};
+
+controller.about = (req, res) => {
+	res.render('about', {
+	titulo: 'HBS-About
+	mensaje: 'HBS About us'
+	});
+};
+
+module.exports = controller;
+
+```
+
+Debido a estos cambios nuestro enrutador `homepage.routes.js` ahora se verá así:
+
+``` javascript
+const router = new express.Router()
+const homepageController = require('../controllers/homepage.controller')
+
+router.get("/", homepageController.index)
+
+router.get("/help", homepageController.help)
+
+router.get("/about", homepageController.about)
+
+module.exports = router
+```
+
 ---
 
-## Referencias:
+## Citas:
 [1] https://www.linkedin.com/advice/0/what-purpose-template-engine-html-skills-web-applications-oa4ae
 [2] https://stackoverflow.com/questions/58652240/what-is-the-Purpose-of-template-engines-in-java
 [3] https://www.geeksforgeeks.org/what-are-template-engines-in-express-and-why-are-they-used/
@@ -358,3 +461,4 @@ Hasta ahora nuestra app es sencilla, pero pudiera crecer a muchas rutas más hac
 [10] https://handlebarsjs.com/guide/partials.html#basic-partials
 [11]https://developer.mozilla.org/es/docs/Web/HTTP/Methods
 [12] http://expressjs.com/en/5x/api.html#res.render
+[13] http://expressjs.com/en/5x/api.html#router
