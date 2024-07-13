@@ -218,7 +218,7 @@ app.listen(3000, () => {
 
 Es importante tener en cuenta que al vincular un servidor de una aplicación debe hacerse a un puerto que libre, y preferiblemente adecuado para el protocolo a usar.
 
-**Puertos lógicos o "Well know ports" **[6](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers):
+**Puertos lógicos o "Well know ports"** [6](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers):
 
 **Puertos conocidos (0-1023):**
 Están reservados para servicios y protocolos ampliamente utilizados. Ejemplos incluyen:
