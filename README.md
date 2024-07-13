@@ -345,7 +345,7 @@ Hasta ahora nuestra app es sencilla, pero pudiera crecer a muchas rutas más hac
 ## Prox tema
 ---
 
-## Citas:
+## Referencias:
 [1] https://www.linkedin.com/advice/0/what-purpose-template-engine-html-skills-web-applications-oa4ae
 [2] https://stackoverflow.com/questions/58652240/what-is-the-Purpose-of-template-engines-in-java
 [3] https://www.geeksforgeeks.org/what-are-template-engines-in-express-and-why-are-they-used/
