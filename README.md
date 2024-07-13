@@ -72,15 +72,19 @@ Tabla 1. Popularidad de los motores de plantillas expresada en términos de desc
   	/html
   	/js
 */
+```
 - Los archivos relacionados con la configuración del servidor se ubican en la dirección:
-  ``` javascript
+
+```javascript
 /*
 	./src
   		app.js
   	/routes
   		homepage.routes.js (rutas a distintas vistas de la app)
 */
+```
 - Los archivos relacionados a las vistas creadas con el motor de plantillas se ubican en:
+
 ```javascript
 */
 	./view
