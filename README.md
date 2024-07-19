@@ -349,7 +349,9 @@ Llamamos el Partial `header.hbs` dentro de la plantilla `index.hbs`
 ```
 
 Salida
+
 ![Mostrando la salida del partial](partialIndex.png "salida del partial")
+
 
 Hasta ahora nuestra app es sencilla, pero pudiera crecer a muchas rutas más haciendo el archivo `apps.js` difícil de manejar. En ese caso podemos modularizar la aplicación creando una carpeta `/src/routes/` donde almacenar las rutas de los módulos.
 
