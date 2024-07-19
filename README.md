@@ -17,25 +17,17 @@
 ## Estructura de carpetas
 Una estructura de carpetas separa los diferentes tipos de archivos del proyecto en carpetas específicas, lo que facilita la navegación y la búsqueda de archivos
 
-- Los archivos estáticos del Front-end para el proyecto se ubican en la ruta:
 ```
-└── public/ 
-	├── css/ 
-	├── html/ 
-	└── js/
-```
-
-- Los archivos relacionados con el servidor se ubican en la ruta:
-```
-└── src/ 
-	├── app.js 
-	├── routes/ 
-	└── controllers/
-```
-
-- Los archivos relacionados a las vistas creadas con el motor de plantillas se ubican en:
-```  
-└── views/  
+project-root/
+├── public/ ("archivos estáticos del Front-end")
+|	├── css/ 
+|	├── html/ 
+|	└── js/
+└── src/ ("archivos relacionados con el servidor")
+|	├── app.js 
+|	├── routes/ 
+|	└── controllers/  
+└── views/ ("vistas creadas con el motor de plantillas")
 	├── partials/ 
 	└── components/
 ```
@@ -212,8 +204,7 @@ app.get("/", (req, res) => {
 
 Al acceder en el navegador a la ruta: `localhost:3000` mostrará:
 
-![Ruta raiz de la aplicación](rutaRaiz.png "raiz de la aplicación")
-
+![Ruta raiz de la aplicación](rutaRaiz.png -ruta "raiz de la aplicación")
 Si sustituimos la función `res.send` dentro de `app.get()` por `res.render` podemos enviar al cliente un archivo HTML generado en el servidor y creado con el motor de plantillas HandlebarsJs  [12](http://expressjs.com/en/5x/api.html#res.render).
 
 Definamos el archivo `index.hbs`
@@ -278,7 +269,9 @@ La comunicación con el servidor se realiza mediante varios métodos HTTP, tambi
 
 Las plantillas de Handlebars las creamos usando texto normal con expresiones incrustadas. Ej.:
 
-`<p>{{firstname}} {{lastname}}</p>`
+```html 
+<p>{{firstname}} {{lastname}}</p>
+```
 
 HandlebarsJS permite la reutilización de porciones de plantillas a través de los parciales (Partials) [9](https://handlebarsjs.com/guide/#partials). Los parciales son plantillas normales de HandlebarsJS, archivos `*.hbs`, a las que otras plantillas pueden llamar directamente.
 
@@ -337,8 +330,15 @@ Representará el parcial llamado `person`. Cuando se ejecute el parcial, se ejec
 
 Veamos otro ejemplo:
 
-Definimos un Partial:
-`./views/partials/header.hbs`
+Creamos un archivo header.hbs en la carpeta partials:
+
+```
+└── views/
+	├── partials/
+		└── header.hbs
+```
+
+Definimos su contenido:
 
 ```html
 <header>
@@ -372,14 +372,139 @@ Salida
 
 Hasta ahora nuestra app es sencilla, pero pudiera crecer a muchas rutas más haciendo el archivo `apps.js` difícil de manejar. En ese caso podemos modularizar la aplicación creando una carpeta `/src/routes/` donde almacenar las rutas de los módulos.
 
-    ./src
-    	app.js
-    	/routes
-    		homepage.routes.js (rutas a distintas paginas de la app)
+```
+└── src/ ("archivos relacionados con el servidor")
+|	├── app.js 
+|	├── routes/
+|   |   └──  homepage.routes.js (rutas a distintas vistas 
+|	|							 de la app)
+|	└── controllers/  
+```
+
+## Pasando datos a las plantillas
+
+Una de las principales funcionalidades de los motores de plantillas como Handlebars es la capacidad de pasar datos desde el servidor hacia las vistas, permitiendo la generación dinámica de contenido en el cliente. A continuación, exploraremos dos situaciones para pasar datos a las plantillas:
+
+1. **Datos hardcoded**: Los datos son proporcionados directamente en el código.
+2. **Datos desde una base de datos**: Los datos son obtenidos desde una base de datos y luego pasados a la plantilla.
+
+#### Ejemplo 1: Pasando datos hardcoded
+
+En este ejemplo, pasaremos datos directamente desde el archivo `app.js` a la plantilla.
+
+**Definición de la plantilla `index.hbs`**:
+```javascript
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{titulo}}</title>
+</head>
+<body>
+  <h1>{{mensaje}}</h1>
+  <p>{{descripcion}}</p>
+</body>
+</html>
+
+```
+
+**Agregando la configuración al servidor en `app.js`**:
+
+```javascript
+// Ruta principal con datos hardcoded
+app.get("/", (req, res) => { 
+	res.render("index", { 
+		titulo: "Página Principal", 
+		mensaje: "Bienvenido a nuestra aplicación", 
+		descripcion: "Esta es una descripción proporcionada directamente en el código." 
+	});
+});
+```
+
+Al acceder a `http://localhost:3000`, la página mostrará los datos pasados desde el servidor:
+
+- Título: "Página Principal"
+- Mensaje: "Bienvenido a nuestra aplicación"
+- Descripción: "Esta es una descripción proporcionada directamente en el código."
+
+#### Ejemplo 2: Pasando datos desde una base de datos
+
+En este ejemplo, asumimos el uso de una base de datos relacional para obtener datos y pasarlos a la plantilla.
+
+Crear un archivo `database.js` para manejar la conexión y las operaciones de la base de datos:
+
+```javascript
+const sqlite3 = require("sqlite3").verbose();
+const db = new sqlite3.Database(":memory:");
+
+db.serialize(() => {
+  db.run("CREATE TABLE users (name TEXT, age INTEGER)");
+
+  const stmt = db.prepare("INSERT INTO users VALUES (?, ?)");
+  stmt.run("Alice", 25);
+  stmt.run("Bob", 30);
+  stmt.finalize();
+});
+
+module.exports = db;
+```
+
+Agregar la configuración a `app.js`:
+```javascript
+...
+
+const db = require("./database"); // Importar la base de datos
+
+// Ruta principal con datos desde la base de datos
+app.get("/", (req, res) => {
+  db.all("SELECT name, age FROM users", (err, rows) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    res.render("index", {
+      titulo: "Usuarios",
+      mensaje: "Lista de Usuarios",
+      usuarios: rows
+    });
+  });
+});
+
+...
+
+```
+
+Actualización de la plantilla `index.hbs`:
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{titulo}}</title>
+</head>
+<body>
+  <h1>{{mensaje}}</h1>
+  <ul>
+    {{#each usuarios}}
+      <li>{{name}} - {{age}} años</li>
+    {{/each}}
+  </ul>
+</body>
+</html>
+```
+
+Al acceder a `http://localhost:3000`, la página mostrará una lista de usuarios obtenida de la base de datos:
+
+- Título: "Usuarios"
+- Mensaje: "Lista de Usuarios"
+- Lista de usuarios:
+    - Alice - 25 años
+    - Bob - 30 años
 
 ## Separando por contexto cada grupo de rutas
 
-Definamos el archivo "homepage.routes.js" e importamos primero a Express.
+Definamos el archivo "homepage.routes.js" e importamos a Express.
 ``` javascript
  const express = require('express')
 ```
@@ -429,13 +554,25 @@ Hasta este momento este código combina cierta lógica de negocio con cuestiones
 
 Si bien este enfoque es funcional, es posible mejorar la separación de intereses. Moviendo la lógica de manejo de rutas a funciones de controlador separadas, se logra desacoplar la configuración de enrutamiento de la lógica de manejo de solicitudes.
 
+### Funciones del controlador homepage.routes.js:
+
+1. Define las rutas: Utiliza express.Router() para crear rutas específicas para la aplicación.
+2. Gestiona las solicitudes: La ruta definida (/) gestiona las solicitudes GET a la página principal.
+3. Procesa la lógica: En este caso, la lógica es simplemente pasar datos hardcoded a la vista.
+4. Renderiza la vista: Usa res.render() para renderizar la plantilla index.hbs con los datos proporcionados.
+
 Iniciamos creando la carpeta para nuestros controladores y en ella el archivo de nuestro controlador:
-    ./src
-    	app.js
-	    /controllers
-		    homepage.controller.js
-    	/routes
-    		homepage.routes.js (rutas a distintas páginas de la app)
+```
+└── src/ ("archivos relacionados con el servidor")
+|	├── app.js
+|	├── controllers/
+|   |   └──  homepage.controllers.js
+|	├── routes/
+|   |   └──  homepage.routes.js (rutas a distintas vistas 
+|	|							 de la app)
+|	└── controllers/  
+
+```
 
 Luego definimos el controlador `homepage.controller.js` cortando y pegando la configuración de las rutas definidas en `homepage.routes.js`.
 ``` javascript
