@@ -2,10 +2,10 @@
 
 ## Creamos el entorno de desarrollo e instalamos las dependencias del proyecto.
 
-1. Inicializamos Node: `node init
-2. Instalamos Express: `npm i express
-3. Instalamos nodemon: `npm i -g nodemon
-4. Instalamos Handlebars: `npm install handlebars
+1. Inicializamos Node: `node init`
+2. Instalamos Express: `npm i express`
+3. Instalamos nodemon: `npm i -g nodemon`
+4. Instalamos Handlebars: `npm install handlebars`
 5. En el archivo package.json para la propiedad `main` establecemos la dirección del archivo `app.js` como su valor.
 6. En el archivo package.json para de la propiedad script crear un script para arrancar la aplicación, para esto agregar: 
 	`"start": "node src/app.js`
@@ -50,7 +50,7 @@ El módulo node:path proporciona utilidades para trabajar con rutas de archivos 
 ```javascript
 const path = require("path");
 ```
-_Lo usaremos para definir las rutas a los archivos estáticos del Front-end y los Partial de Handlebars.
+_Lo usaremos para definir las rutas a los archivos estáticos del Front-end y los Partial de Handlebars_.
 
 Importamos Express como framework web para Node.js
 
@@ -222,9 +222,9 @@ app.get("/", (req, res) => {
 	});
 })
 ```
-_Definición de ruta a una vista de la aplicación.
+_Definición de ruta a una vista de la aplicación_.
 
-Podemos agregar todas las demás rutas que formen parte de la aplicación.
+Podemos agregar todas las demás rutas que formen parte de la aplicación, hacemos lo siguiente.
 
 Para la vista help:
 ```javascript
