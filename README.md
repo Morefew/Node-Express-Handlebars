@@ -210,6 +210,9 @@ app.get("/", (req, res) => {
 });
 ```
 
+Al acceder en el navegador a la ruta: `localhost:3000` mostrará:
+
+![Ruta raiz de la aplicación](rutaRaiz.png -ruta "raiz de la aplicación")
 Si sustituimos la función `res.send` dentro de `app.get()` por `res.render` podemos enviar al cliente un archivo HTML generado en el servidor y creado con el motor de plantillas HandlebarsJs  [12](http://expressjs.com/en/5x/api.html#res.render).
 
 Definamos el archivo `index.hbs`
