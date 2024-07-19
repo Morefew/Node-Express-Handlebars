@@ -2,10 +2,10 @@
 
 ## Creamos el entorno de desarrollo e instalamos las dependencias del proyecto.
 
-1. Inicializamos Node: `node init`
-2. Instalamos Express: `npm i express`
-3. Instalamos nodemon: `npm i -g nodemon`
-4. Instalamos Handlebars: `npm install handlebars`
+1. Inicializamos Node: `node init
+2. Instalamos Express: `npm i express
+3. Instalamos nodemon: `npm i -g nodemon
+4. Instalamos Handlebars: `npm install handlebars
 5. En el archivo package.json para la propiedad `main` establecemos la dirección del archivo `app.js` como su valor.
 6. En el archivo package.json para de la propiedad script crear un script para arrancar la aplicación, para esto agregar: 
 	`"start": "node src/app.js`
@@ -188,7 +188,7 @@ Con `app.set()` usamos el método "set" de Express para asignar un valor a una p
 app.set("view engine", "hbs");
 ```
 
-Una de las funcionalidades de HandlebarsJs son los partials, pero antes de usarlos es necesario configurar su uso en Express, lo hacemos de la siguiente manera:
+Una de las funcionalidades de Handlebars.js son los partials, pero antes de usarlos es necesario configurar su uso en Express.js, lo hacemos de la siguiente manera:
 
 1. Definimos y asignamos a una variable la ruta donde serán almacenados.
 2. Luego registramos los archivos/ruta de los partials que usaremos en el proyecto. En nuestro caso registramos la ruta a la carpeta partials donde se almacenarán todos los partials del proyecto.
@@ -212,25 +212,40 @@ app.get("/", (req, res) => {
 
 Si sustituimos la función `res.send` dentro de `app.get()` por `res.render` podemos enviar al cliente un archivo HTML generado en el servidor y creado con el motor de plantillas HandlebarsJs  [12](http://expressjs.com/en/5x/api.html#res.render).
 
-En este caso agregamos una ruta para la vista de "index". Esta ruta hace referencia al archivo con el mismo nombre dentro de la carpeta`./views/index.hbs`.
+Definamos el archivo `index.hbs`
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ titulo }}</title>
+</head>
+<body>
+	<h1>{{ mensaje }}</h1>
+</body>
+</html>
+```
+
+En este caso agregamos una ruta para la vista de "index.hbs". Esta ruta hace referencia al archivo con el mismo nombre dentro de la carpeta`./views/index.hbs`.
 
 ```javascript
 app.get("/", (req, res) => {
 	res.render('index', {
-	titulo: 'HBS
+	titulo: 'HBS',
 	mensaje: 'Home Page'
 	});
 })
 ```
 _Definición de ruta a una vista de la aplicación_.
 
-Podemos agregar todas las demás rutas que formen parte de la aplicación, hacemos lo siguiente.
+Podemos agregar todas las demás rutas que formen parte de la aplicación.
 
 Para la vista help:
 ```javascript
 app.get("/help", (req, res) => {
 	res.render('help', {
-	titulo: 'HBS-Help
+	titulo: 'HBS-Help',
 	mensaje: 'Help page'
 	});
 })
@@ -240,7 +255,7 @@ Para la vista about:
 ```javascript
 app.get("/about", (req, res) => {
 	res.render('about', {
-	titulo: 'HBS-About
+	titulo: 'HBS-About',
 	mensaje: 'HBS About us'
 	});
 })
@@ -334,10 +349,10 @@ Llamamos el Partial `header.hbs` dentro de la plantilla `index.hbs`
 
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>{{ titulo }}</title>
 		<link rel="stylesheet" href="css/styles.css">
 	</head>
@@ -349,9 +364,7 @@ Llamamos el Partial `header.hbs` dentro de la plantilla `index.hbs`
 ```
 
 Salida
-
 ![Mostrando la salida del partial](partialIndex.png "salida del partial")
-
 
 Hasta ahora nuestra app es sencilla, pero pudiera crecer a muchas rutas más haciendo el archivo `apps.js` difícil de manejar. En ese caso podemos modularizar la aplicación creando una carpeta `/src/routes/` donde almacenar las rutas de los módulos.
 
@@ -367,28 +380,28 @@ Definamos el archivo "homepage.routes.js" e importamos primero a Express.
  const express = require('express')
 ```
 
- Al configurar el servidor en el archivo "app.js" asignamos Express a la variable `app`, sin embargo al modularizar las rutas necesitamos usar el router que Express [13](http://expressjs.com/en/5x/api.html#router) nos provee por lo que adaptaremos cada ruta creada para usar este route.
+ Al configurar el servidor en el archivo "app.js" asignamos Express a la variable `app`, sin embargo, al modularizar las rutas necesitamos usar el router que Express [13](http://expressjs.com/en/5x/api.html#router) nos provee por lo que adaptaremos cada ruta creada para usar este route.
 
 ``` javascript
 const router = new express.Router()
 
 router.get("/", (req, res) => {
 	res.render('index', {
-	titulo: 'HBS
+	titulo: 'HBS',
 	mensaje: 'Home Page'
 	});
 })
 
 router.get("/help", (req, res) => {
 	res.render('help', {
-	titulo: 'HBS-Help
+	titulo: 'HBS-Help',
 	mensaje: 'Help page'
 	});
 })
 
 router.get("/about", (req, res) => {
 	res.render('about', {
-	titulo: 'HBS-About
+	titulo: 'HBS-About',
 	mensaje: 'HBS About us'
 	});
 })
@@ -418,7 +431,7 @@ Iniciamos creando la carpeta para nuestros controladores y en ella el archivo de
 	    /controllers
 		    homepage.controller.js
     	/routes
-    		homepage.routes.js (rutas a distintas paginas de la app)
+    		homepage.routes.js (rutas a distintas páginas de la app)
 
 Luego definimos el controlador `homepage.controller.js` cortando y pegando la configuración de las rutas definidas en `homepage.routes.js`.
 ``` javascript
@@ -426,21 +439,21 @@ const controller = {};
 
 controller.index = (req, res) => {
 	res.render('index', {
-	titulo: 'HBS
+	titulo: 'HBS',
 	mensaje: 'Home Page'
 	});
 };
 
 controller.help = (req, res) => {
 	res.render('help', {
-	titulo: 'HBS-Help
+	titulo: 'HBS-Help',
 	mensaje: 'Help page'
 	});
 };
 
 controller.about = (req, res) => {
 	res.render('about', {
-	titulo: 'HBS-About
+	titulo: 'HBS-About',
 	mensaje: 'HBS About us'
 	});
 };
