@@ -1,20 +1,138 @@
-# Clase 24
+# Clase 24-27 cont... Node, Express, NPM.
 
-cont... Node, Express, NPM...
+## Creamos el entorno de desarrollo e instalamos las dependencias del proyecto.
 
-node init
-npm i express
-npm i nodemon
+1. Inicializamos Node: `node init
+2. Instalamos Express: `npm i express
+3. Instalamos nodemon: `npm i -g nodemon
+4. Instalamos Handlebars: `npm install handlebars
+5. En el archivo package.json para la propiedad `main` establecemos la dirección del archivo `app.js` como su valor.
+6. En el archivo package.json para de la propiedad script crear un script para arrancar la aplicación, para esto agregar: 
+	`"start": "node src/app.js`
+	El comando para este script es: `node start`.
+7. En el archivo package.json para de la propiedad script crear un script para arrancar nodemon, para esto agregar: 
+	`"dev": "nodemon src/app.js`
+	El comando para este script es: `npm run dev`
 
-node ./app.js
+## Estructura de carpetas
+Una estructura de carpetas separa los diferentes tipos de archivos del proyecto en carpetas específicas, lo que facilita la navegación y la búsqueda de archivos
 
-npm start
-nodemon
-handlebars.JS
+- Los archivos estáticos del Front-end para el proyecto se ubican en la ruta:
+```
+└── public/ 
+	├── css/ 
+	├── html/ 
+	└── js/
+```
 
-## Configurando una aplicación con NodeJS, ExpressJS y Handlebars.
+- Los archivos relacionados con el servidor se ubican en la ruta:
+```
+└── src/ 
+	├── app.js 
+	├── routes/ 
+	└── controllers/
+```
 
-A continuación se demuestra como configurar un servidor con ExpressJS para renderizar contenido web estático usando plantillas generadas por un motor de plantillas, en este caso HandlebarsJs.
+- Los archivos relacionados a las vistas creadas con el motor de plantillas se ubican en:
+```  
+└── views/  
+	├── partials/ 
+	└── components/
+```
+
+Luego de definir la estructura de las carpetas del proyecto pasamos a configurar el servidor con Express.js para renderizar contenido web usando plantillas generadas por un motor de plantillas, en este caso Handlebars.js
+
+## Configurando el servidor
+
+Trabajaremos en el archivo app.js.
+El módulo node:path proporciona utilidades para trabajar con rutas de archivos y directorios[7](https://nodejs.org/docs/latest/api/path.html).  Se puede acceder a el usando:
+
+```javascript
+const path = require("path");
+```
+_Lo usaremos para definir las rutas a los archivos estáticos del Front-end y los Partial de Handlebars.
+
+Importamos Express como framework web para Node.js
+
+```javascript
+const express = require("express");
+```
+
+Importamos el motor de plantillas, Handlebars.js.
+
+```javascript
+const hbs = require("hbs");
+```
+
+Asignamos Express a una variable de la aplicación para correr sus distintas funciones.
+
+```javascript
+const app = express();
+```
+
+Hacemos una prueba para comprobar la dirección de la carpeta y el archivo del servidor, la salida debe arrojarnos `.../src` y `.../src/app.js` respectivamente.
+
+```javascript
+console.log(__dirname);
+console.log(__filename);
+```
+
+Definimos la ruta de la carpeta donde se almacenarán los archivos para el Front-end del proyecto. Como vimos `__dirname` hace referencia a la carpeta del archivo app.js, partimos de esta ubicación para definir la ruta hasta llegar a la carpeta que contiene los archivos HTML.
+
+Del módulo PATH usamos la función join y la variable `__dirname` para generar la ruta a la carpeta `./public`:
+
+```javascript
+const publicDirectoryPath = path.join(__dirname, "../public");
+```
+
+#### Rutas del contenido estático Front-end
+
+Definimos donde se encuentra el contenido a servir por Express al cliente. Con `app.use()` Express monta la función o funciones de middleware especificadas en la ruta definida. `express.static` es la función de middleware utilizada para ofrecer contenido estático para la aplicación desde el directorio "público" en el directorio de la aplicación.
+
+```JavaScript
+app.use(express.static(publicDirectoryPath))
+```
+
+Desde este momento los archivos, HTML, CSS, JS, imagen, etc... en la carpeta `public` serán servidos al cliente por el servidor. La desventaja es que estos archivos no responderán a dinámicamente a las acciones del usuario.
+
+#### Monitoreo de solicitudes/respuestas del servidor
+
+La función app.listen() en Express.js es un método crucial para iniciar un servidor web y hacer que escuche las conexiones entrantes en un host y puerto específicos. Es importante definir las rutas y el middleware de la aplicación antes de llamar a `app.listen()`.
+
+```javascript
+app.listen(3000, () => {
+  console.log("Servidor corriendo en http://localhost:3000");
+});
+```
+
+Es importante tener en cuenta que al vincular un servidor de una aplicación debe hacerse a un puerto libre, y preferiblemente adecuado para el protocolo a usar.
+
+**Puertos lógicos** [6](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers):
+Son el medio de comunicación hacia el exterior de nuestras redes locales. En términos informáticos, los puertos constituyen el medio o camino utilizado por los softwares y aplicaciones para conectar con un determinado servidor. Técnicamente, un puerto de servidor permite identificar de manera precisa tanto el origen como el destino de los datos para cada software o aplicación ejecutada en un ordenador [14](https://community.fs.com/es/article/what-are-server-ports-and-how-do-they-work.html). Los puertos lógicos configuran una abstracción que independiza la conexión del puerto. Por tanto, si para cada puerto físico se establece una conexión, para un puerto lógico se pueden establecer múltiples conexiones [14](https://community.fs.com/es/article/what-are-server-ports-and-how-do-they-work.html).
+
+Los puertos lógicos se clasifican como:
+
+**Puertos conocidos (0-1023):**
+Están reservados para servicios y protocolos ampliamente utilizados. Ejemplos incluyen:
+Puerto 15: Netstat
+Puerto 20/21: FTP
+Puerto 22: SSH
+Puerto 23: Telnet
+Puerto 25: SMTP
+Puerto 53: DNS
+Puerto 80: HTTP
+Puerto 443: HTTPS
+Y muchos otros como FTPS (puerto 990), IMAP4S (puerto 993) y POP3S (puerto 995).
+
+**Puertos registrados (1024 – 49,151):**
+Estos puertos están registrados para aplicaciones y servicios específicos, pero no gozan de un reconocimiento tan universal como los puertos más conocidos.
+
+**Puertos dinámicos/privados (49,152 – 65,535):**
+También conocidos como puertos efímeros, se utilizan para conexiones temporales iniciadas por clientes. Cuando un cliente realiza una solicitud a un servidor, el sistema operativo del cliente selecciona un puerto disponible dentro de este rango para la conexión saliente. Luego, el servidor responde utilizando el mismo número de puerto para la conexión entrante.
+
+## Configurando HBS.
+
+Esta dependencia va a buscar en la carpeta "views" un archivo `.hbs` que represente la plantilla a renderizar por el servidor y luego servir al cliente (navegador en nuestro caso).
 
 ### Propósitos de los motores de plantillas en el desarrollo web.
 
@@ -63,80 +181,7 @@ Es importante mencionar que a pesar de sus beneficios los motores de plantillas 
 
 Tabla 1. Popularidad de los motores de plantillas expresada en términos de descargas semanales de NPM para JavaScript y en estrellas de GitHub para los otros motores de plantillas.
 
-### Estructura de carpetas:
-
-- Los archivos y carpetas del proyecto Frontend se ubican en la dirección:
-```javascript
-/*  ./public
-  	/css
-  	/html
-  	/js
-*/
-```
-- Los archivos relacionados con la configuración del servidor se ubican en la dirección:
-
-```javascript
-/*
-	./src
-  		app.js
-  	/routes
-  		homepage.routes.js (rutas a distintas vistas de la app)
-*/
-```
-- Los archivos relacionados a las vistas creadas con el motor de plantillas se ubican en:
-
-```javascript
-*/
-	./view
-  		/partials
-  	/components
-```
-
-## Configurando el servidor
-
-Trabajaremos en el archivo app.js.
-
-Path es un módulo de Node que proporciona una forma de trabajar con directorios y rutas de archivos. [7](https://nodejs.org/docs/latest/api/path.html)
-
-```javascript
-const path = require("path");
-```
-
-Importamos Express como framework para Node.js
-
-```javascript
-const express = require("express");
-```
-
-Importamos el motor de plantillas, Handlebars.js.
-
-```javascript
-const hbs = require("hbs");
-```
-
-Asignamos Express a una variable de la aplicación para correr sus distintas funciones.
-
-```javascript
-const app = express();
-```
-
-Visualizamos la dirección y el archivo del servidor por el servidor, la salida debe arrojarnos `./src` y `app.js` respectivamente.
-
-```javascript
-console.log(__dirname);
-console.log(__filename);
-```
-
-Definimos la ruta de la carpeta donde se almacenarán los archivos para el Front-end del proyecto. Como vimos `__dirname` hace referencia a la carpeta del archivo app.js, de esta partimos a definir la ruta hasta llegar a los archivos HTML.
-
-```javascript
-const publicDirectoryPath = path.join(__dirname, "../public");
-```
-
-### Configurando HBS.
-
-Esta dependencia va a buscar en la carpeta "views" un archivo `.hbs` que represente la plantilla a servir al cliente (navegador en nuestro caso).
-
+### Asignando HBS como el motor de plantillas
 Con `app.set()` usamos el método "set" de Express para asignar un valor a una propiedad del servidor. Se puede almacenar cualquier valor que se desee, pero Express nos proporciona ciertos nombres de propiedades para configurar el comportamiento del servidor. Estos nombres especiales aparecen en la tabla de configuración de Express. [8](http://expressjs.com/en/5x/api.html#app.set). En este caso estamos usando la propiedad "view engine" para asignarle HandlebarsJS.
 
 ```javascript
@@ -154,26 +199,10 @@ const partialsPath = path.join(__dirname, "../views/partials");
 hbs.registerPartials(partialsPath);
 ```
 
-### Rutas del contenido Front-end
+### Definiendo las rutas a las vistas de la aplicación.
 
-Definimos donde se encuentra el contenido a servir que Express va a mostar al cliente. Con `app.use()` Express monta la función o funciones de middleware especificadas en la ruta definida.
-
-```JavaScript
-app.use(express.static(publicDirectoryPath))
-```
-
-**Métodos HTTP para Solicitudes al Servidor**
-La comunicación con el servidor se realiza mediante varios métodos HTTP, también conocidos como verbos. Estos métodos indican la intención de la solicitud. Los principales métodos HTTP son:
-
-- **GET**: Solicita datos del servidor. No modifica los datos en el servidor.
-- **POST**: Envía datos al servidor para crear un nuevo recurso.
-- **PUT**: Actualiza un recurso existente en el servidor con los datos proporcionados.
-- **PATCH**: Modifica parcialmente un recurso existente en el servidor.
-- **DELETE**: Elimina un recurso del servidor.[11](https://developer.mozilla.org/es/docs/Web/HTTP/Methods)
-
-### Definiendo la ruta de entrada.
-
-"/" es la URL raíz de la aplicación, en este caso intentaremos mostrar un mensaje. Con este acercamiento inicial comprobamos la comunicación entre servidor y cliente. Al usar `res.send` enviamos una solicitud a express que contiene un string que usará para mostrarlo en el cliente (navegador). Si comprobamos que es así damos por concluida la prueba. Continuaremos entonces con la definición de las rutas a las distintas visitas de la aplicación generadas con el motor de plantillas.
+Para un dominio ```https://www.urldeldominio.com/
+``` la barra "/" es la URL raíz de la aplicación. En este caso primero intentaremos mostrar un mensaje en la ruta raíz del dominio. Con este acercamiento inicial comprobamos la comunicación entre servidor y cliente. Al usar `res.send` enviamos una solicitud a express que contiene un string que usará para mostrarlo en el cliente (navegador). Si comprobamos que es así damos por concluida la prueba. Continuaremos entonces con la definición de las rutas a las distintas visitas de la aplicación generadas con el motor de plantillas.
 
 ```javascript
 app.get("/", (req, res) => {
@@ -217,39 +246,16 @@ app.get("/about", (req, res) => {
 })
 ```
 
-### Monitoreo de solicitudes/respuestas del servidor
+#### **Métodos HTTP para Solicitudes al Servidor**
+La comunicación con el servidor se realiza mediante varios métodos HTTP, también conocidos como verbos. Estos métodos indican la intención de la solicitud. Los principales métodos HTTP son:
 
-Con `app.listen()` vinculamos y escuchamos las conexiones en el host y puerto especificados.
+- **GET**: Solicita datos del servidor. No modifica los datos en el servidor.
+- **POST**: Envía datos al servidor para crear un nuevo recurso.
+- **PUT**: Actualiza un recurso existente en el servidor con los datos proporcionados.
+- **PATCH**: Modifica parcialmente un recurso existente en el servidor.
+- **DELETE**: Elimina un recurso del servidor.[11](https://developer.mozilla.org/es/docs/Web/HTTP/Methods)
 
-```javascript
-app.listen(3000, () => {
-  console.log("Servidor corriendo en http://localhost:3000");
-});
-```
-
-Es importante tener en cuenta que al vincular un servidor de una aplicación debe hacerse a un puerto que libre, y preferiblemente adecuado para el protocolo a usar.
-
-**Puertos lógicos o "Well know ports"** [6](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers):
-
-**Puertos conocidos (0-1023):**
-Están reservados para servicios y protocolos ampliamente utilizados. Ejemplos incluyen:
-Puerto 15: Netstat
-Puerto 20/21: FTP
-Puerto 22: SSH
-Puerto 23: Telnet
-Puerto 25: SMTP
-Puerto 53: DNS
-Puerto 80: HTTP
-Puerto 443: HTTPS
-Y muchos otros como FTPS (puerto 990), IMAP4S (puerto 993) y POP3S (puerto 995).
-
-**Puertos registrados (1024 – 49,151):**
-Estos puertos están registrados para aplicaciones y servicios específicos, pero no gozan de un reconocimiento tan universal como los puertos más conocidos.
-
-**Puertos dinámicos/privados (49,152 – 65,535):**
-También conocidos como puertos efímeros, se utilizan para conexiones temporales iniciadas por clientes. Cuando un cliente realiza una solicitud a un servidor, el sistema operativo del cliente selecciona un puerto disponible dentro de este rango para la conexión saliente. Luego, el servidor responde utilizando el mismo número de puerto para la conexión entrante.
-
-## Creando Plantillas HTML
+### Creando Plantillas HTML - Views
 
 Las plantillas de Handlebars las creamos usando texto normal con expresiones incrustadas. Ej.:
 
@@ -304,7 +310,7 @@ Salida - lo que se presenta el cliente
 
 Esta llamada registrará el parcial "person". Se pueden precompilar los parciales y pasar la plantilla precompilada al segundo parámetro.
 
-Para usar el parcial usamo la sintaxis siguiente en el archivo `.hbs` donde queremos usarlo:
+Para usar el parcial usamos la sintaxis siguiente en el archivo `.hbs` donde queremos usarlo:
 
 `{{> person }}`
 
@@ -345,7 +351,6 @@ Llamamos el Partial `header.hbs` dentro de la plantilla `index.hbs`
 Salida
 ![Mostrando la salida del partial](partialIndex.png "salida del partial")
 
-
 Hasta ahora nuestra app es sencilla, pero pudiera crecer a muchas rutas más haciendo el archivo `apps.js` difícil de manejar. En ese caso podemos modularizar la aplicación creando una carpeta `/src/routes/` donde almacenar las rutas de los módulos.
 
     ./src
@@ -353,14 +358,14 @@ Hasta ahora nuestra app es sencilla, pero pudiera crecer a muchas rutas más hac
     	/routes
     		homepage.routes.js (rutas a distintas paginas de la app)
 
-### Separando por contexto cada grupo de rutas
+## Separando por contexto cada grupo de rutas
 
-Definamos a "homepage.routes.js" importando primero a Express.
+Definamos el archivo "homepage.routes.js" e importamos primero a Express.
 ``` javascript
  const express = require('express')
 ```
 
- Al configurar el servidor en el archivo "app.js" asignamos Express a la variable `app`, sin embargo al modularizar las rutas usaremos necesitamos usar el router que Express [13](http://expressjs.com/en/5x/api.html#router) nos provee por lo que adaptaremos cada ruta creada para usar este route.
+ Al configurar el servidor en el archivo "app.js" asignamos Express a la variable `app`, sin embargo al modularizar las rutas necesitamos usar el router que Express [13](http://expressjs.com/en/5x/api.html#router) nos provee por lo que adaptaremos cada ruta creada para usar este route.
 
 ``` javascript
 const router = new express.Router()
@@ -400,7 +405,7 @@ app.use(homepageRouter)
 
 Aprovechando el cambio hacia la modularización de la aplicación, podemos separar un poco más el diseño de nuestra aplicación siguiendo las actividades que realizan las distintas partes del código que tenemos hasta ahora.
 
-### Creando la capa Controlador
+## Creando la capa Controlador - Controller
 Hasta este momento este código combina cierta lógica de negocio con cuestiones de presentación. Sin embargo, no es un caso grave de mezcla y este patrón es bastante común en las aplicaciones Express.js, especialmente para rutas más simples.
 
 Si bien este enfoque es funcional, es posible mejorar la separación de intereses. Moviendo la lógica de manejo de rutas a funciones de controlador separadas, se logra desacoplar la configuración de enrutamiento de la lógica de manejo de solicitudes.
@@ -457,6 +462,8 @@ router.get("/about", homepageController.about)
 module.exports = router
 ```
 
+## [Configurando MongoDB como base de datos](Clase%2028%20-%20MongoDB.md)
+
 ---
 
 ## Referencias:
@@ -473,3 +480,4 @@ module.exports = router
 [11]https://developer.mozilla.org/es/docs/Web/HTTP/Methods
 [12] http://expressjs.com/en/5x/api.html#res.render
 [13] http://expressjs.com/en/5x/api.html#router
+[14] https://community.fs.com/es/article/what-are-server-ports-and-how-do-they-work.html
