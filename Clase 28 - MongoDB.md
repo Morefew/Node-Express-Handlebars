@@ -1,5 +1,5 @@
 # Clase 28 - MongoDB
-__cont... [Clase 24 - 27 Node, Express, Handlebars](Clase%2024%20-%2027%20Node,%20Express,%20Handlebars.md)
+__cont... [Clase 24 - 27 Node, Express, Handlebars](README.md)
 
 Instalar MongoDb Community Edition
 Instalar MongoDB Compass - GUI para realizar operaciones en la base de datos.
