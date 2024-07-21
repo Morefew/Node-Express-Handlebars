@@ -40,7 +40,7 @@ npm install mongoose
 ```
 
 Estructura de Carpetas:
-project-root/
+```project-root/
 ├── public/ ("archivos estáticos del Front-end")
 |	├── css/ 
 |	├── html/ 
@@ -54,6 +54,7 @@ project-root/
 └── views/ ("vistas creadas con el motor de plantillas")
 	├── partials/ 
 	└── components/
+```
 
 ### Archivo de conexión
 `dbconnection.js`
